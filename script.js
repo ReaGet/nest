@@ -1,6 +1,7 @@
 import getSvgProps from "./js/svg-props.js";
 
 const svgWrapper = document.querySelector(".preview");
+const unitSelect = document.querySelector(".control__select");
 const result = {
   area: document.querySelector(".info--area .result__info-value"),
   length: document.querySelector(".info--length .result__info-value"),
@@ -14,7 +15,6 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
       .then((svg) => {
         // const html = `<div class="svg-wrapper">${svg}<div class="svg-info"></div></div>`;
         svgWrapper.innerHTML = svg;
-        // showSvgInfo();
       });
   });
 });
@@ -22,6 +22,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
 document.addEventListener("click", ({ target }) => {
   const { action } = target.dataset;
   const svg = svgWrapper.querySelector("svg");
+  const option = unitSelect.options[unitSelect.selectedIndex];
 
   if (!action || !svg) {
     return;
@@ -29,6 +30,23 @@ document.addEventListener("click", ({ target }) => {
 
   const svgProps = getSvgProps(svg);
   const svgPropAction = svgProps[action];
+  const value = svgPropAction();
 
-  result[action].innerHTML = svgPropAction();
+  result[action].innerHTML = convertToUnit(value, option, action);
 });
+
+function convertToUnit(value, option, unitType) {
+  switch (option.value) {
+    case "mm":
+      return `${value.toFixed(3)} ${option.innerHTML}`;
+      break;
+    case "m":
+      if (unitType === "length") {
+        return `${(value * Math.pow(10, -3)).toFixed(3)} ${option.innerHTML}`;
+      }
+      if (unitType === "area") {
+        return `${(value * Math.pow(10, -6)).toFixed(3)} ${option.innerHTML}`;        
+      }
+      break;
+  }
+}
