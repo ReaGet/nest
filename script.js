@@ -13,7 +13,8 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
     fetch(url)
       .then((response) => response.text())
       .then((svg) => {
-        // const html = `<div class="svg-wrapper">${svg}<div class="svg-info"></div></div>`;
+        result.area.innerHTML = "0";
+        result.length.innerHTML = "0";
         svgWrapper.innerHTML = svg;
       });
   });

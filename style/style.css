@@ -18,26 +18,23 @@
   gap: 20px;
 }
 
-svg {
-  width: 300px;
-  height: auto !important;
+.control__group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
-path, polygon {
-  fill: #000 !important;
-}
+
 .preview {
   display: flex;
   flex-direction: column;
   gap: 50px;
 }
-.svg-wrapper {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-  border: 1px solid red;
+
+svg {
+  width: 300px;
+  height: auto !important;
 }
-.svg-info {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
+
+path, polygon {
+  fill: #000 !important;
 }
