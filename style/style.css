@@ -27,14 +27,36 @@
 .preview {
   display: flex;
   flex-direction: column;
+  width: 60%;
   gap: 50px;
 }
 
-svg {
+/* svg {
   width: 300px;
   height: auto !important;
+} */
+
+svg {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+  pointer-events: none;
 }
 
-path, polygon {
-  fill: #000 !important;
+svg * {
+  fill: #fff !important;
+  fill-opacity: 0 !important;
+  stroke: #3bb34a !important;
+  stroke-width: 2px !important;
+  vector-effect: non-scaling-stroke !important;
+  stroke-linejoin: round !important;
+  pointer-events: fill;
+}
+
+svg *.fullRect {
+  fill: #f5f5f5 !important;
+  fill-opacity: 1 !important;
+  vector-effect: non-scaling-stroke !important;
+  stroke-linejoin: round !important;
 }

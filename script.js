@@ -1,4 +1,6 @@
 import getSvgProps from "./js/svg-props.js";
+import parsesvg from "./js/svgparser.js";
+import SvgNest from "./js/svgnest.js";
 
 const svgWrapper = document.querySelector(".preview");
 const unitSelect = document.querySelector(".control__select");
@@ -13,9 +15,11 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
     fetch(url)
       .then((response) => response.text())
       .then((svg) => {
+        const svgEl = SvgNest.parsesvg(svg);
         result.area.innerHTML = "0";
         result.length.innerHTML = "0";
-        svgWrapper.innerHTML = svg;
+        createBgSvgRect(svgEl);
+        svgWrapper.appendChild(svgEl);
       });
   });
 });
@@ -50,4 +54,19 @@ function convertToUnit(value, option, unitType) {
       }
       break;
   }
+}
+
+function createBgSvgRect(svg) {
+  const wholeSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  wholeSVG.setAttribute('width', svg.getAttribute('width'));
+  wholeSVG.setAttribute('height', svg.getAttribute('height'));
+  wholeSVG.setAttribute('viewBox', svg.getAttribute('viewBox'));
+  var rect = document.createElementNS(wholeSVG.namespaceURI,'rect');
+  rect.setAttribute('x', wholeSVG.viewBox.baseVal.x);
+  rect.setAttribute('y', wholeSVG.viewBox.baseVal.x);
+  rect.setAttribute('width', wholeSVG.viewBox.baseVal.width);
+  rect.setAttribute('height', wholeSVG.viewBox.baseVal.height);
+  rect.setAttribute('class', 'fullRect');
+  wholeSVG.appendChild(rect);
+  svgWrapper.appendChild(wholeSVG);
 }
