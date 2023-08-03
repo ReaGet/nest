@@ -53,7 +53,7 @@
 			
 			// parse svg
 			svg = SvgParser.load(svgstring);
-			console.log(svg)
+			// console.log(svg)
 			
 			this.style = SvgParser.getStyle();
 
@@ -76,7 +76,8 @@
 		}
 		
 		this.setbin = function(element){
-			if(!svg){
+    console.log(element)
+		if(!svg){
 				return;
 			}
 			bin = element;

@@ -155,4 +155,4 @@ Matrix.prototype.calc = function (x, y, isRelative) {
   ];
 };
 
-// export default Matrix;
+export default Matrix;

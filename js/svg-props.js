@@ -1,13 +1,9 @@
+import { getSvgScale } from "./util/utils.js";
+
 export default function getSvgProps(svg) {
-  const svgWidth = getNumber(svg.getAttribute("width"));
-  const svgHeight = getNumber(svg.getAttribute("height"));
   const svgViewbox = svg.getAttribute("viewBox").split(" ").map(Number);
 
-  const scale = svgWidth / svgViewbox[2];
-
-  function getNumber(str) {
-    return parseFloat(str.match(/[+-]?\d+(\.\d+)?/g));
-  }
+  const scale = getSvgScale(svg);
 
   function getLength(_svg) {
     const paths = _svg.querySelectorAll("path, polygon");

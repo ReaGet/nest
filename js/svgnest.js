@@ -5,11 +5,9 @@
 
 import SvgParser from "./svgparser.js";
 import Parallel from "./util/parallel.js";
-import GeometryUtil from "./util/geometryutil.js";
-import PlacementWorker from "./util/placementworker.js";
+import GeometryUtil from "./util/geometryutil2.js";
+import PlacementWorker, { rotatePolygon, toClipperCoordinates } from "./util/placementworker2.js";
 import "./util/clipper.js";
-export default new SvgNest();
-
 
 function SvgNest() {
   var self = this;
@@ -339,14 +337,14 @@ function SvgNest() {
         searchEdges: config.exploreConcave,
         useHoles: config.useHoles
       },
-      evalPath: 'util/eval.js'
+      evalPath: 'js/util/eval.js'
     });
     
     // EDIT
-    // p.require('matrix.js');
-    // p.require('geometryutil.js');
-    // p.require('placementworker.js');
-    // p.require('clipper.js');
+    p.require('matrix.js');
+    p.require('geometryutil.js');
+    p.require('placementworker.js');
+    p.require('clipper.js');
     
     var self = this;
     var spawncount = 0;
@@ -362,7 +360,7 @@ function SvgNest() {
       }
       var searchEdges = global.env.searchEdges;
       var useHoles = global.env.useHoles;
-      
+
       var A = rotatePolygon(pair.A, pair.key.Arotation);
       var B = rotatePolygon(pair.B, pair.key.Brotation);
 
@@ -543,7 +541,7 @@ function SvgNest() {
         env: {
           self: worker
         },
-        evalPath: 'util/eval.js'
+        evalPath: 'js/util/eval.js'
       });
       
       p2.require('json.js');
@@ -989,3 +987,5 @@ GeneticAlgorithm.prototype.randomWeightedIndividual = function(exclude){
   
   return pop[0];
 }
+
+export default new SvgNest();

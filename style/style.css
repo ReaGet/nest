@@ -25,10 +25,15 @@
 }
 
 .preview {
+  position: relative;
   display: flex;
   flex-direction: column;
   width: 60%;
   gap: 50px;
+}
+
+.preview svg:not(.svgFullrect) {
+  position: absolute;
 }
 
 /* svg {

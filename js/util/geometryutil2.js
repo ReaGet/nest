@@ -4,8 +4,8 @@
  * Licensed under the MIT license
  */
 
-(function(root){
-	'use strict';
+// (function(root){
+// 	'use strict';
 	
 	// private shared variables/methods
 	
@@ -1887,4 +1887,6 @@ const GeometryUtil = {
 		return rotated;
 	}
 };
-})(typeof window !== 'undefined' ? window : self);
+// })(typeof window !== 'undefined' ? window : self);
+
+export default GeometryUtil;

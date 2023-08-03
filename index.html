@@ -20,9 +20,9 @@
       <button class="control__btn" data-action="area">Посчитать площадь</button>
       <button class="control__btn" data-action="length">Посчитать периметр</button>
       <div class="control__group">
-        <div class="control__fields">
-          <input type="text" placeholder="Ширина, мм">
-          <input type="text" placeholder="Высота, мм">
+        <div class="control__fields field">
+          <input class="field__item field__item--width" type="text" placeholder="Ширина, мм">
+          <input class="field__item field__item--height" type="text" placeholder="Высота, мм">
         </div>
         <button class="control__btn" data-action="nest">Компоновать элементы</button>
       </div>
@@ -37,6 +37,30 @@
         <span class="result__info-title">Периметр: </span>
         <span class="result__info-value">0</span>
       </div>
+    </div>
+    <div class="sidebar">				
+      <div id="info">				
+      <h2 id="info_time"></h2>
+      <div class="progress"><div class="progress_inner" id="info_progress"></div></div>
+      <span class="subscript">Placement progress</span>
+      
+      <div id="info_placement">
+        <div class="column left">
+          <h1 class="label"><span id="info_efficiency"></span><sup>%</sup></h1>
+          <span class="subscript">Material Utilization</span>
+        </div>
+        
+        <div class="column right">
+          <h1 class="label" id="info_iterations"></h1>
+          <span class="subscript">Iterations</span>
+        </div>
+        
+        <div class="column left">
+          <h1 class="label"><span id="info_placed"></span></h1>
+          <span class="subscript">Parts placed</span>
+        </div>
+      </div>
+      </div>				
     </div>
     <input type="file" name="" id="fileDialog">
     <div class="preview"></div>

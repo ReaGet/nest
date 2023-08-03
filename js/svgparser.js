@@ -3,8 +3,8 @@
  * A library to convert an SVG string to parse-able segments for CAD/CAM use
  * Licensed under the MIT license
  */
-import Matrix from "./util/matrix.js";
-import GeometryUtil from "./util/geometryutil.js";
+import Matrix from "./util/matrix2.js";
+import GeometryUtil from "./util/geometryutil2.js";
 import "./util/domparser.js";
 import "./util/pathsegpolyfill.js";
 	

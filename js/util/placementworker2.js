@@ -1,6 +1,6 @@
 
 // jsClipper uses X/Y instead of x/y...
-function toClipperCoordinates(polygon){
+export function toClipperCoordinates(polygon){
 	var clone = [];
 	for(var i=0; i<polygon.length; i++){
 		clone.push({
@@ -12,7 +12,7 @@ function toClipperCoordinates(polygon){
 	return clone;
 };
 
-function toNestCoordinates(polygon, scale){
+export function toNestCoordinates(polygon, scale){
 	var clone = [];
 	for(var i=0; i<polygon.length; i++){
 		clone.push({
@@ -24,7 +24,7 @@ function toNestCoordinates(polygon, scale){
 	return clone;
 };
 
-function rotatePolygon(polygon, degrees){
+export function rotatePolygon(polygon, degrees){
 	var rotated = [];
 	var angle = degrees * Math.PI / 180;
 	for(var i=0; i<polygon.length; i++){
@@ -289,7 +289,8 @@ function PlacementWorker(binPolygon, paths, ids, rotations, config, nfpCache){
 	};
 
 }
-(typeof window !== 'undefined' ? window : self).PlacementWorker = PlacementWorker;
+
+export default PlacementWorker;
 
 // clipperjs uses alerts for warnings
 function alert(message) { 

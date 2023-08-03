@@ -227,6 +227,7 @@
 				e.preventDefault();
 				upload.style.backgroundColor = (e.type == "dragover" ? "#d7e9b7" : "");
 			}
+			
 			function FileDrop(e){
 				e.stopPropagation(); // Make sure not to replace website by file
 				e.preventDefault();
@@ -337,7 +338,6 @@
 				var input = this;
 				reader.onload = function(e) {
 					input.value = null;
-					console.log(reader.result)
 					
 					if(reader.result){
 						try{
@@ -396,7 +396,6 @@
 								else
 									currentbin.setAttribute('class', className);
 							}
-							
 							window.SvgNest.setbin(this);
 							this.setAttribute('class',(this.getAttribute('class') ? this.getAttribute('class')+' ' : '') + 'active');
 							
