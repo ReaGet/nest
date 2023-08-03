@@ -1,10 +1,15 @@
-export function getSvgScale(svg) {
-  const svgWidth = getNumber(svg.getAttribute("width"));
-  const svgViewbox = svg.getAttribute("viewBox").split(" ").map(Number);
+(function(root) {
+  root.getSvgScale = getSvgScale;
+  root.getNumber = getNumber;
 
-  return svgWidth / svgViewbox[2];
-}
-
-export function getNumber(str) {
-  return parseFloat(str.match(/[+-]?\d+(\.\d+)?/g));
-}
+  function getSvgScale(svg) {
+    const svgWidth = getNumber(svg.getAttribute("width"));
+    const svgViewbox = svg.getAttribute("viewBox").split(" ").map(Number);
+  
+    return svgWidth / svgViewbox[2];
+  }
+  
+  function getNumber(str) {
+    return parseFloat(str.match(/[+-]?\d+(\.\d+)?/g));
+  }
+})(window);

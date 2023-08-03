@@ -1,6 +1,6 @@
-import getSvgProps from "./js/svg-props.js";
-import SvgNest from "./js/svgnest.js";
-import { getSvgScale, getNumber } from "./js/util/utils.js";
+// import getSvgProps from "./js/svg-props.js";
+// import SvgNest from "./js/svgnest.js";
+// import { getSvgScale, getNumber } from "./js/util/utils.js";
 
 const svgWrapper = document.querySelector(".preview");
 const unitSelect = document.querySelector(".control__select");
@@ -20,6 +20,8 @@ const fields = {
   height: document.querySelector(".field__item--height"),
 };
 
+const bins = document.getElementById("bins"); 
+
 let scale = 1;
 let isWorking = false;
 
@@ -33,6 +35,10 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         result.area.innerHTML = "0";
         result.length.innerHTML = "0";
         svgWrapper.innerHTML = "";
+        bins.innerHTML = "";
+        document.getElementById('info_efficiency').innerHTML = "";
+        document.getElementById('info_iterations').innerHTML = "";
+        document.getElementById('info_placed').innerHTML = "";
 
         const bgSvgRect = createBgSvgRect(svgEl);
 
@@ -52,7 +58,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
 
 document.addEventListener("click", ({ target }) => {
   const { action } = target.dataset;
-  const svg = svgWrapper.querySelector("svg");
+  const svg = svgWrapper.querySelector("svg:not(.svgFullrect)");
   const option = unitSelect.options[unitSelect.selectedIndex];
 
   if (!action || !svg) {
@@ -68,7 +74,7 @@ document.addEventListener("click", ({ target }) => {
   }
 
   if (action === "nest") {
-    startNesting();
+    isWorking ? stopNesting() : startNesting();
   }
 });
 
@@ -121,7 +127,25 @@ function createBgSvgRect(svg) {
   return wholeSVG;
 }
 
+let prevpercent = 0;
+let startTime = null;
+let iterations = 0;
+
 function startNesting() {
+  SvgNest.config({
+    curveTolerance: "0.3",
+    exploreConcave: false,
+    mutationRate: "10",
+    populationSize: "10",
+    rotations: "4",
+    spacing: "0",
+    useHoles: false,
+  });
+
+  prevpercent = 0;
+  startTime = null;
+  iterations = 0;
+
   SvgNest.setbin(items.bg);
   SvgNest.start(progress, renderSvg);
   isWorking = true;
@@ -135,11 +159,8 @@ function stopNesting() {
   isWorking = false;
 
   const button = document.querySelector("[data-action='nest']");
-  button.innerHTML = "Компоновать элементы<";
+  button.innerHTML = "Компоновать элементы";
 }
-
-let prevpercent = 0;
-let startTime = null;
 
 function progress(percent){
   var transition = percent > prevpercent ? '; transition: width 0.1s' : '';
@@ -168,22 +189,23 @@ function progress(percent){
   }
 }
 
-let iterations = 0;
 
-function renderSvg(svglist, efficiency, placed, total){
+function renderSvg(svglist, efficiency, placed, total) {
   iterations++;
   document.getElementById('info_iterations').innerHTML = iterations;
   
   if(!svglist || svglist.length == 0){
     return;
   }
-  var bins = document.getElementById('bins');
-  bins.innerHTML = '';
   
-  for(var i=0; i<svglist.length; i++){
+  bins.innerHTML = "";
+  
+  for(var i=0; i < svglist.length; i++){
     if(svglist.length > 2){
       svglist[i].setAttribute('class','grid');
     }
+    svglist[i].setAttribute("width", `${fields.width.value}mm`);
+    svglist[i].setAttribute("height", `${fields.height.value}mm`);
     bins.appendChild(svglist[i]);
   }
   
@@ -191,9 +213,10 @@ function renderSvg(svglist, efficiency, placed, total){
     document.getElementById('info_efficiency').innerHTML = Math.round(efficiency*100);
   }
 
+  document.getElementById('info_iterations').innerHTML = iterations;
   document.getElementById('info_placed').innerHTML = placed+'/'+total;
-  
-  document.getElementById('info_placement').setAttribute('style','display: block');
-  display.setAttribute('style','display: none');
-  download.className = 'button download animated bounce';
+
+  if (iterations >= 3) {
+    stopNesting();
+  }
 }

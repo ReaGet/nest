@@ -42,7 +42,7 @@
       <div id="info">				
       <h2 id="info_time"></h2>
       <div class="progress"><div class="progress_inner" id="info_progress"></div></div>
-      <span class="subscript">Placement progress</span>
+      <!-- <span class="subscript">Placement progress</span> -->
       
       <div id="info_placement">
         <div class="column left">
@@ -64,8 +64,19 @@
     </div>
     <input type="file" name="" id="fileDialog">
     <div class="preview"></div>
+    <div id="bins"></div>
   </div>
-  <script src="./nest/svgparser.js"></script>
-  <script src="script.js" type="module"></script>
+  <script src="./js/util/pathsegpolyfill.js"></script>
+  <script src="./js/util/matrix.js"></script>
+  <script src="./js/util/domparser.js"></script>
+  <script src="./js/util/clipper.js"></script>
+  <script src="./js/util/parallel.js"></script>
+  <script src="./js/util/geometryutil.js"></script>
+  <script src="./js/util/placementworker.js"></script>
+  <script src="./js/util/utils.js"></script>
+  <script src="./js/svgparser.js"></script>
+  <script src="./js/svgnest.js"></script>
+  <script src="./js/svg-props.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
