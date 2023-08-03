@@ -76,6 +76,10 @@ document.addEventListener("click", ({ target }) => {
   if (action === "nest") {
     isWorking ? stopNesting() : startNesting();
   }
+
+  if (action === "download") {
+    downloadSvgs();
+  }
 });
 
 document.addEventListener("input", ({ target }) => {
@@ -132,15 +136,15 @@ let startTime = null;
 let iterations = 0;
 
 function startNesting() {
-  SvgNest.config({
-    curveTolerance: "0.3",
-    exploreConcave: false,
-    mutationRate: "10",
-    populationSize: "10",
-    rotations: "4",
-    spacing: "0",
-    useHoles: false,
-  });
+  // SvgNest.config({
+  //   curveTolerance: "0.3",
+  //   exploreConcave: false,
+  //   mutationRate: "10",
+  //   populationSize: "10",
+  //   rotations: "4",
+  //   spacing: "0",
+  //   useHoles: false,
+  // });
 
   prevpercent = 0;
   startTime = null;
@@ -174,7 +178,7 @@ function progress(percent){
     var diff = now-startTime;
     // show a time estimate for long-running placements
     var estimate = (diff/percent)*(1-percent);
-    document.getElementById('info_time').innerHTML = millisecondsToStr(estimate)+' remaining';
+    // document.getElementById('info_time').innerHTML = millisecondsToStr(estimate)+' remaining';
     
     if(diff > 5000 && percent < 0.3 && percent > 0.02 && estimate > 10000){
       document.getElementById('info_time').setAttribute('style','display: block');
@@ -189,9 +193,11 @@ function progress(percent){
   }
 }
 
-
 function renderSvg(svglist, efficiency, placed, total) {
   iterations++;
+  if (iterations >= 5) {
+    stopNesting();
+  }
   document.getElementById('info_iterations').innerHTML = iterations;
   
   if(!svglist || svglist.length == 0){
@@ -215,8 +221,61 @@ function renderSvg(svglist, efficiency, placed, total) {
 
   document.getElementById('info_iterations').innerHTML = iterations;
   document.getElementById('info_placed').innerHTML = placed+'/'+total;
+}
 
-  if (iterations >= 3) {
-    stopNesting();
-  }
+function downloadSvgs() {  
+  const svgs = bins.querySelectorAll("svg");
+
+  [...svgs].forEach((item, index) => {
+    const svg = item.cloneNode(true);
+    svg.querySelector(".bin").remove();
+    svg.setAttribute("fill", "#fff");
+    svg.setAttribute("stroke", "#3bb34a");
+    let output;
+    if(typeof XMLSerializer != 'undefined'){
+      output = (new XMLSerializer()).serializeToString(svg);
+    } else {
+      output = svg.outerHTML;
+    }
+
+    let blob = new Blob([output], {type: "image/svg+xml;charset=utf-8"});
+    saveAs(blob, `output_${index}.svg`);
+  });
+  // var svg;
+  // svg = display.querySelector('svg');
+  
+  // if(!svg){
+  //   svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+  // }
+  
+  // svg = svg.cloneNode(false);
+  
+  // // maintain stroke, fill etc of input
+  // if(SvgNest.style){
+  //   svg.appendChild(SvgNest.style);
+  // }
+  
+  // var binHeight = parseInt(bins.children[0].getAttribute('height'));
+  
+  // for(var i=0; i<bins.children.length; i++){
+  //   var b = bins.children[i];
+  //   var group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+  //   group.setAttribute('transform', 'translate(0 '+binHeight*1.1*i+')');
+  //   for(var j=0; j<b.children.length; j++){
+  //     group.appendChild(b.children[j].cloneNode(true));
+  //   }
+    
+  //   svg.appendChild(group);
+  // }
+  
+  // var output;
+  // if(typeof XMLSerializer != 'undefined'){
+  //   output = (new XMLSerializer()).serializeToString(svg);
+  // }
+  // else{
+  //   output = svg.outerHTML;
+  // }
+  
+  // var blob = new Blob([output], {type: "image/svg+xml;charset=utf-8"});
+  // saveAs(blob, "SVGnest-output.svg");
 }
