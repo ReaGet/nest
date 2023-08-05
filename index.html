@@ -19,6 +19,7 @@
       </label>
       <button class="control__btn" data-action="area">Посчитать площадь</button>
       <button class="control__btn" data-action="length">Посчитать периметр</button>
+      <button class="control__btn" data-action="outerRect">Описанный прямоугольник</button>
       <div class="control__group">
         <div class="control__fields field">
           <input class="field__item field__item--width" type="text" placeholder="Ширина, мм">
@@ -37,13 +38,15 @@
         <span class="result__info-title">Периметр: </span>
         <span class="result__info-value">0</span>
       </div>
+      <div class="result__info info--outerRect">
+        <span class="result__info-title">Описанный прямоугольник: </span>
+        <span class="result__info-value">0</span>
+      </div>
     </div>
     <div class="sidebar">				
       <div id="info">				
       <h2 id="info_time"></h2>
       <div class="progress"><div class="progress_inner" id="info_progress"></div></div>
-      <!-- <span class="subscript">Placement progress</span> -->
-      
       <div id="info_placement">
         <div class="column left">
           <h1 class="label"><span id="info_efficiency"></span><sup>%</sup></h1>
@@ -63,6 +66,7 @@
       </div>				
     </div>
     <input type="file" name="" id="fileDialog">
+    <button class="control__btn" data-action="outerRectResults">Описанный прямоугольник результатов</button>
     <button data-action="download">Скачать</button>
     <div class="preview"></div>
     <div id="bins"></div>

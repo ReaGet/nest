@@ -13,6 +13,7 @@ const items = {
 const result = {
   area: document.querySelector(".info--area .result__info-value"),
   length: document.querySelector(".info--length .result__info-value"),
+  outerRect: document.querySelector(".info--outerRect .result__info-value"),
 };
 
 const fields = {
@@ -34,6 +35,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         const svgEl = SvgNest.parsesvg(svg);
         result.area.innerHTML = "0";
         result.length.innerHTML = "0";
+        result.outerRect.innerHTML = "0";
         svgWrapper.innerHTML = "";
         bins.innerHTML = "";
         document.getElementById('info_efficiency').innerHTML = "";
@@ -41,6 +43,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         document.getElementById('info_placed').innerHTML = "";
 
         const bgSvgRect = createBgSvgRect(svgEl);
+        svgEl.classList.add("svg-original");
 
         svgWrapper.appendChild(bgSvgRect);
         svgWrapper.appendChild(svgEl);
@@ -58,19 +61,27 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
 
 document.addEventListener("click", ({ target }) => {
   const { action } = target.dataset;
-  const svg = svgWrapper.querySelector("svg:not(.svgFullrect)");
+  const svg = items.svg;
   const option = unitSelect.options[unitSelect.selectedIndex];
 
   if (!action || !svg) {
     return;
   }
 
-  if (["area", "length"].includes(action)) {
+  if (["area", "length", "outerRect"].includes(action)) {
     const svgProps = getSvgProps(svg);
     const svgPropAction = svgProps[action];
     const value = svgPropAction();
   
     result[action].innerHTML = convertToUnit(value, option, action);
+  }
+
+  if (action === "outerRectResults") {
+    const results = bins.querySelectorAll("svg");
+    [...results].forEach((svg) => {
+      const svgProps = getSvgProps(svg);
+      console.log(svg, svgProps.outerRect());
+    });
   }
 
   if (action === "nest") {
@@ -104,7 +115,7 @@ function convertToUnit(value, option, unitType) {
       return `${value.toFixed(3)} ${option.innerHTML}`;
       break;
     case "m":
-      if (unitType === "length") {
+      if (unitType === "length" || unitType === "outerRect") {
         return `${(value * Math.pow(10, -3)).toFixed(3)} ${option.innerHTML}`;
       }
       if (unitType === "area") {
@@ -119,8 +130,8 @@ function createBgSvgRect(svg) {
   wholeSVG.setAttribute('width', svg.getAttribute('width'));
   wholeSVG.setAttribute('height', svg.getAttribute('height'));
   wholeSVG.setAttribute('viewBox', svg.getAttribute('viewBox'));
-  wholeSVG.classList.add("svgFullrect")
-  var rect = document.createElementNS(wholeSVG.namespaceURI,'rect');
+  wholeSVG.classList.add("svgFullrect");
+  const rect = document.createElementNS(wholeSVG.namespaceURI,'rect');
   rect.setAttribute('x', wholeSVG.viewBox.baseVal.x);
   rect.setAttribute('y', wholeSVG.viewBox.baseVal.x);
   rect.setAttribute('width', wholeSVG.viewBox.baseVal.width);
