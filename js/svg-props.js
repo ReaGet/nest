@@ -18,10 +18,60 @@
     }
 
     function getArea(_svg) {
+      const { imageData, canvasScale } = getCanvasData(_svg);
+      let check = {};
+      let alphaValues = 0;
+
+      // alphaValues = imageData.filter((value, index) => index % 4 === (4 - 1) && value >= 125).length;
+      // for (let i = 0; i < imageData.length; i += 4) {
+      //   let a = imageData[i + 3];
+      //   if (check[a] === undefined) {
+      //     check[a] = 0;
+      //   }
+      //   check[a]++;
+      // }
+      for (let i = 0; i < imageData.length; i += 4) {
+        if (imageData[i] < 50 && imageData[i + 1] === 0 && imageData[i + 2] === 0) {
+          alphaValues++;
+        }
+      }
+
+      return alphaValues * Math.pow(scale, 2) / Math.pow(1 / canvasScale, 2);
+    }
+
+    function calcOuterRect(_svg) {
+      const { imageData, canvasScale, canvas } = getCanvasData(_svg);
+      const bounds = {
+        xMin: Number.MAX_SAFE_INTEGER,
+        xMax: Number.MIN_SAFE_INTEGER,
+        yMin: Number.MAX_SAFE_INTEGER,
+        yMax: Number.MIN_SAFE_INTEGER,
+      };
+
+      for (let i = 0; i < imageData.length; i += 4) {
+        const x = (i / 4) % canvas.width,
+          y = ~~(i / canvas.width);
+        if (imageData[i] < 50 && imageData[i + 1] === 0 && imageData[i + 2] === 0) {
+          bounds.xMin = Math.min(bounds.xMin, x);
+          bounds.xMax = Math.max(bounds.xMax, x);
+          bounds.yMin = Math.min(bounds.yMin, y);
+          bounds.yMax = Math.max(bounds.yMax, y);
+        }
+      }
+      // console.log(bounds)
+      const width = bounds.xMax - bounds.xMin,
+        height = bounds.yMax - bounds.yMin;
+      return (width * height) * Math.pow(scale, 2) / Math.pow(1 / canvasScale, 2) / 4;
+    }
+    
+    function getCanvasData(_svg) {
       const { ctx, canvas, canvasScale, destroy } = createCanvas(svgViewbox[2], svgViewbox[3]);
       const paths = _svg.querySelectorAll("path, polygon, polyline");
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      // ctx.clearRect(0, 0, canvas.width, canvas.height);
       
+      ctx.fillStyle = "#f00";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       [...paths].forEach((item, i) => {
         const poly = item.closest("polyline, polygon");
         let d = "";
@@ -29,42 +79,26 @@
         if (poly) {
           d = polyToPath(item.getAttribute("points"), poly.tagName);
         } else {
-          d = item.getAttribute("d") 
+          d = item.getAttribute("d");
         }
 
-        ctx.scale(1 / canvasScale, 1 / canvasScale);
+        const { translate, rotate } = getGProps(item);
+        ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, translate.x, translate.y);
+        ctx.rotate(rotate * Math.PI / 180);
         ctx.fillStyle = "#000";
         const path = new Path2D(d);
+        ctx.beginPath();
         ctx.fill(path);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
       });
 
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
-      let check = {};
-      let alphaValues = 0;
-
-      alphaValues = imageData.filter((value, index) => index % 4 === (4 - 1) && value >= 125).length;
-      for (let i = 0; i < imageData.length; i += 4) {
-        let a = imageData[i + 3];
-        if (check[a] === undefined) {
-          check[a] = 0;
-        }
-        check[a]++;
-      }
 
       destroy();
 
-      return alphaValues * Math.pow(scale, 2) / Math.pow(1 / canvasScale, 2);
+      return { imageData, canvasScale, canvas };
     }
-
-    function polyToPath(string, polyType) {
-      const points = string.split(/\s+|,/);
-      let x0 = points.shift(), y0 = points.shift();
-      let pathdata = `M${x0}, ${y0}L${points.join(" ")}`;
-      if (polyType == "polygon") pathdata += "z";
-      return pathdata;
-    }
-
+    
     function createCanvas(width, height) {
       const maxSize = 8000;
       let canvasScale = 1;
@@ -85,6 +119,7 @@
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
+      // document.body.appendChild(canvas);
 
       return {
         canvas,
@@ -95,63 +130,27 @@
         }
       };
     }
-
-    function calcOuterRect(svg) {
-      const child = svg.querySelectorAll("path, polygon, polyline, rect:not(.bin), circle");
-      const bounds = {
-        xMin: null,
-        xMax: null,
-        yMin: null,
-        yMax: null,
-      };
-
-      [...child].forEach((item) => {
-        // const boundingRect = item.getBBox();
-        const boundingRect = item.getBoundingClientRect();
-        const offset = getOffset(item);
-        // console.log(offset)
-
-        boundingRect.x += +offset.x;
-        boundingRect.y += +offset.y;
-
-        if (bounds.xMin === null)  bounds.xMin = boundingRect.x;
-        if (bounds.xMax === null)  bounds.xMax = boundingRect.x + boundingRect.width;
-        if (bounds.yMin === null)  bounds.yMin = boundingRect.y;
-        if (bounds.yMax === null)  bounds.yMax = boundingRect.y + boundingRect.height;
-
-        bounds.xMin = Math.min(bounds.xMin, boundingRect.x);
-        bounds.xMax = Math.max(bounds.xMax, boundingRect.x + boundingRect.width);
-        bounds.yMin = Math.min(bounds.yMin, boundingRect.y);
-        bounds.yMax = Math.max(bounds.yMax, boundingRect.y + boundingRect.height);
-      });
-
-      const width = bounds.xMax - bounds.xMin,
-        height = bounds.yMax - bounds.yMin;
-
-      const rect = document.createElementNS(svg.namespaceURI, "rect");
-      rect.setAttribute("x", bounds.xMin);
-      rect.setAttribute("y", bounds.yMin);
-      rect.setAttribute("width", width);
-      rect.setAttribute("height", height);
-      rect.setAttribute("fill", "#f00");
-
-      svg.appendChild(rect);
-
-      // const length = rect.getTotalLength();
-
-      console.log(bounds, width, height)
-      // return (width + height) * 2;
-      
-      return (width * height);
+    
+    function polyToPath(string, polyType) {
+      const points = string.split(/\s+|,/);
+      let x0 = points.shift(), y0 = points.shift();
+      let pathdata = `M${x0}, ${y0}L${points.join(" ")}`;
+      if (polyType == "polygon") pathdata += "z";
+      return pathdata;
     }
 
-    function getOffset(el) {
-      const values = { x: 0, y: 0};
+    function getGProps(el) {
+      const values = {
+        translate: { x: 0, y: 0 },
+        rotate: 0,
+      };
       const parent = el.closest("g");
       if (parent) {
         const translate = parent.getAttribute("transform").match(/translate\((-?\d+\.?\d*),?\s*(-?\d+[.]?\d*)?\)/);
-        values.x = translate[1];
-        values.y = translate[2];
+        const rotate = parent.getAttribute("transform").match(/rotate\((-?\d+\.?\d*),?\s*(-?\d+[.]?\d*)?\)/);
+        values.translate.x = +translate[1];
+        values.translate.y = +translate[2];
+        values.rotate = +rotate[1];
       }
 
       return values;

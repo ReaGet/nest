@@ -77,11 +77,20 @@ document.addEventListener("click", ({ target }) => {
   }
 
   if (action === "outerRectResults") {
+    const outerRect = document.querySelector("#bins_outer-rect");
+    let output = "";
     const results = bins.querySelectorAll("svg");
-    [...results].forEach((svg) => {
+    [...results].forEach((svg, index) => {
       const svgProps = getSvgProps(svg);
-      console.log(svg, svgProps.outerRect());
+      const value = svgProps.outerRect();
+      // console.log(value, option, action)
+      output += `
+        <span>Опис. прямоугольник #${index}: ${convertToUnit(value, option, action)}</span>
+      `;
+      // console.log(svg, svgProps.outerRect());
     });
+
+    outerRect.innerHTML = output;
   }
 
   if (action === "nest") {
@@ -115,10 +124,10 @@ function convertToUnit(value, option, unitType) {
       return `${value.toFixed(3)} ${option.innerHTML}`;
       break;
     case "m":
-      if (unitType === "length" || unitType === "outerRect") {
+      if (unitType === "length") {
         return `${(value * Math.pow(10, -3)).toFixed(3)} ${option.innerHTML}`;
       }
-      if (unitType === "area") {
+      if (unitType === "area" || unitType === "outerRect" || unitType === "outerRectResults") {
         return `${(value * Math.pow(10, -6)).toFixed(3)} ${option.innerHTML}`;        
       }
       break;
