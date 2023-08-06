@@ -65,12 +65,15 @@
     }
     
     function getCanvasData(_svg) {
+      // console.log(_svg, svgViewbox)
       const { ctx, canvas, canvasScale, destroy } = createCanvas(svgViewbox[2], svgViewbox[3]);
       const paths = _svg.querySelectorAll("path, polygon, polyline");
       // ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       ctx.fillStyle = "#f00";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // console.log(canvas.width, canvas.height);
 
       [...paths].forEach((item, i) => {
         const poly = item.closest("polyline, polygon");
@@ -81,10 +84,17 @@
         } else {
           d = item.getAttribute("d");
         }
-
         const { translate, rotate } = getGProps(item);
-        ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, translate.x, translate.y);
+        const xOffset = (translate.x -svgViewbox[0]),
+          yOffset = (translate.y - svgViewbox[1]);
+
+        // console.log(item, translate.x, Math.abs(svgViewbox[0]), translate.x + Math.abs(svgViewbox[0]), xOffset);
+        // console.log(d, xOffset, yOffset)
+
+        ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, xOffset, yOffset);
+        // ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, translate.x, translate.y);
         ctx.rotate(rotate * Math.PI / 180);
+
         ctx.fillStyle = "#000";
         const path = new Path2D(d);
         ctx.beginPath();
@@ -119,6 +129,9 @@
       const canvas = document.createElement("canvas");
       canvas.width = width;
       canvas.height = height;
+      
+      // canvas.width = 10000;
+      // canvas.height = 10000;
       // document.body.appendChild(canvas);
 
       return {

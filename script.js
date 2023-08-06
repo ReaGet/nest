@@ -59,7 +59,6 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         items.svg = svgEl;
  
         scale = getSvgScale(svgEl);
-        console.log(scale)
 
         fields.width.value = getNumber(bgSvgRect.getAttribute("width")).toFixed(2);
         fields.height.value = getNumber(bgSvgRect.getAttribute("height")).toFixed(2);
