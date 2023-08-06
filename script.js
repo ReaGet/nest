@@ -42,19 +42,27 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         document.getElementById('info_iterations').innerHTML = "";
         document.getElementById('info_placed').innerHTML = "";
 
+        svgWrapper.appendChild(svgEl);
+        const correctSvgProps = getCorrectSvgProps(svgEl);
+        // Original SVG
+        svgEl.setAttribute("width", correctSvgProps.svg.width);
+        svgEl.setAttribute("height", correctSvgProps.svg.height);
+        svgEl.setAttribute("viewBox", correctSvgProps.viewbox);
+        // BG RECT
         const bgSvgRect = createBgSvgRect(svgEl);
         svgEl.classList.add("svg-original");
-
         svgWrapper.appendChild(bgSvgRect);
-        svgWrapper.appendChild(svgEl);
+        bgSvgRect.setAttribute("width", correctSvgProps.svg.width);
+        bgSvgRect.setAttribute("height", correctSvgProps.svg.height);
 
         items.bg = bgSvgRect.querySelector("rect");
         items.svg = svgEl;
  
         scale = getSvgScale(svgEl);
+        console.log(scale)
 
-        fields.width.value = getNumber(bgSvgRect.getAttribute("width"));
-        fields.height.value = getNumber(bgSvgRect.getAttribute("height"));
+        fields.width.value = getNumber(bgSvgRect.getAttribute("width")).toFixed(2);
+        fields.height.value = getNumber(bgSvgRect.getAttribute("height")).toFixed(2);
       });
   });
 });
@@ -136,15 +144,20 @@ function convertToUnit(value, option, unitType) {
 
 function createBgSvgRect(svg) {
   const wholeSVG = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  const viewBoxValue = `0 0 ${getNumber(svg.getAttribute('width'))} ${getNumber(svg.getAttribute('height'))}`
   wholeSVG.setAttribute('width', svg.getAttribute('width'));
   wholeSVG.setAttribute('height', svg.getAttribute('height'));
-  wholeSVG.setAttribute('viewBox', svg.getAttribute('viewBox'));
+  wholeSVG.setAttribute('viewBox', viewBoxValue);
   wholeSVG.classList.add("svgFullrect");
   const rect = document.createElementNS(wholeSVG.namespaceURI,'rect');
-  rect.setAttribute('x', wholeSVG.viewBox.baseVal.x);
-  rect.setAttribute('y', wholeSVG.viewBox.baseVal.x);
-  rect.setAttribute('width', wholeSVG.viewBox.baseVal.width);
-  rect.setAttribute('height', wholeSVG.viewBox.baseVal.height);
+  // rect.setAttribute('x', wholeSVG.viewBox.baseVal.x);
+  // rect.setAttribute('y', wholeSVG.viewBox.baseVal.y);
+  // rect.setAttribute('width', wholeSVG.viewBox.baseVal.width);
+  // rect.setAttribute('height', wholeSVG.viewBox.baseVal.height);
+  rect.setAttribute('x', 0);
+  rect.setAttribute('y', 0);
+  rect.setAttribute('width', getNumber(svg.getAttribute('width')));
+  rect.setAttribute('height',getNumber(svg.getAttribute('height')));
   rect.setAttribute('class', 'fullRect');
   wholeSVG.appendChild(rect);
 
