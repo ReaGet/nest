@@ -243,6 +243,9 @@
 		}
 		
 		this.launchWorkers = function(tree, binPolygon, config, progressCallback, displayCallback){
+			if (!tree) {
+				return;
+			}
 			function shuffle(array) {
 			  var currentIndex = array.length, temporaryValue, randomIndex ;
 
@@ -812,6 +815,19 @@
 		}
 		
 		this.stop = function(){
+			// svg = null;
+			this.style = null;
+			parts = null;
+			tree = null;
+			bin = null;
+			binPolygon = null;
+			binBounds = null;
+			nfpCache = {};
+			GA = null;
+			best = null;
+			workerTimer = null;
+			progress = 0;
+			
 			this.working = false;
 			if(workerTimer){
 				clearInterval(workerTimer);

@@ -26,13 +26,14 @@
 
 .preview {
   /* display: none; */
-  visibility: hidden;
-  height: 0;
   position: relative;
   display: flex;
   flex-direction: column;
+  height: 0;
   width: 60%;
   gap: 50px;
+  overflow: hidden;
+  visibility: hidden;
 }
 
 .preview svg:not(.svgFullrect) {

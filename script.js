@@ -36,7 +36,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
         result.length.innerHTML = getLength(option);
         getOuterRect(option, (res) => {
           result.outerRect.innerHTML = res.map((value, index) => {
-            return `<span>Опис. прямоугольник #${index}: ${convertToUnit(value, option, "outerRectResults")}</span>`;
+            return `<span>#${index+1}: ${convertToUnit(value, option, "outerRectResults")}</span>`;
           }).join("");
         })
       });
@@ -63,8 +63,8 @@ function appendSvg(_svg) {
   const bgSvgRect = createBgSvgRect(_svg);
   _svg.classList.add("svg-original");
   svgWrapper.appendChild(bgSvgRect);
-  bgSvgRect.setAttribute("width", correctSvgProps.svg.width);
-  bgSvgRect.setAttribute("height", correctSvgProps.svg.height);
+  bgSvgRect.setAttribute("width", binSize.width);
+  bgSvgRect.setAttribute("height", binSize.height);
 
   items.bg = bgSvgRect.querySelector("rect");
   items.svg = _svg;
@@ -170,7 +170,7 @@ function stopNesting() {
   isWorking = false;
 }
 
-function progress(percent){
+function progress(percent) {
   var transition = percent > prevpercent ? '; transition: width 0.1s' : '';
   document.getElementById('info_progress').setAttribute('style','width: '+Math.round(percent*100)+'% ' + transition);
   // document.getElementById('info').setAttribute('style','display: block');
@@ -217,7 +217,6 @@ function renderSvg(svglist, efficiency, placed, total, fn) {
   }
 
   if (iterations >= 1) {
-    stopNesting();
     let output = [];
     const results = bins.querySelectorAll("svg");
     // console.log(222, results);
@@ -228,6 +227,7 @@ function renderSvg(svglist, efficiency, placed, total, fn) {
       output.push(value);
     });
     fn(output);
+    stopNesting();
   }
   
   // if(efficiency || efficiency === 0){
