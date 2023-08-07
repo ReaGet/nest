@@ -41,9 +41,9 @@
 }
 
 #bins {
-  visibility: hidden;
+  /* visibility: hidden;
   height: 0;
-  overflow: hidden;
+  overflow: hidden; */
   display: flex;
   gap: 20px;
   max-width: 30%;

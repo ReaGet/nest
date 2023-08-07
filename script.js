@@ -35,7 +35,7 @@ document.querySelector("#fileDialog").addEventListener("change", (event) => {
 
         result.area.innerHTML = getArea(option);
         result.length.innerHTML = getLength(option);
-        getOuterRect(option, (res) => {
+        getOuterRect((res) => {
           result.outerRect.innerHTML = res.map((value, index) => {
             return `<span>#${index+1}: ${convertToUnit(value, option, "outerRectResults")}</span>`;
           }).join("");
@@ -86,24 +86,10 @@ function getArea(option) {
   return convertToUnit(value, option, "area");
 }
 
-function getOuterRect(option, fn) {
+function getOuterRect(fn) {
   stopNesting();
   startNesting(fn);
 }
-
-document.addEventListener("click", ({ target }) => {
-  const { action } = target.dataset;
-  const svg = items.svg;
-  const option = unitSelect.options[unitSelect.selectedIndex];
-
-  if (action === "outerRectResults") {
-    
-  }
-
-  if (action === "nest") {
-    isWorking ? stopNesting() : startNesting();
-  }
-});
 
 function convertToUnit(value, option, unitType) {
   switch (option.value) {
@@ -157,6 +143,12 @@ function startNesting(fn) {
   //   spacing: "0",
   //   useHoles: false,
   // });
+
+  const scale = getSvgScale(items.svg);
+  console.log(scale)
+  SvgNest.config({
+    spacing: 10 * scale,
+  });
 
   prevpercent = 0;
   startTime = null;

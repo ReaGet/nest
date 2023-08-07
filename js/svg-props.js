@@ -161,9 +161,14 @@
       if (parent) {
         const translate = parent.getAttribute("transform").match(/translate\((-?\d+\.?\d*),?\s*(-?\d+[.]?\d*)?\)/);
         const rotate = parent.getAttribute("transform").match(/rotate\((-?\d+\.?\d*),?\s*(-?\d+[.]?\d*)?\)/);
-        values.translate.x = +translate[1];
-        values.translate.y = +translate[2];
-        values.rotate = +rotate[1];
+        // console.log(parent, parent.getAttribute("transform"), translate, rotate)
+        if (translate) {
+          values.translate.x = +translate[1];
+          values.translate.y = +translate[2];
+        }
+        if (rotate) {
+          values.rotate = +rotate[1];
+        }
       }
 
       return values;
