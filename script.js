@@ -66,11 +66,12 @@ function appendSvg(_svg) {
   _svg.classList.add("svg-original");
   console.log(binSize)
   svgWrapper.appendChild(bgSvgRect);
-  bgSvgRect.setAttribute("width", binSize.width / scale);
-  bgSvgRect.setAttribute("height", binSize.height / scale);
 
   items.bg = bgSvgRect.querySelector("rect");
   items.svg = _svg;
+  
+  items.bg.setAttribute("width", binSize.width / scale);
+  items.bg.setAttribute("height", binSize.height / scale);
 }
 
 function getLength(option) {
