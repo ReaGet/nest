@@ -19,6 +19,7 @@ const result = {
 
 const bins = document.getElementById("bins"); 
 
+let scale = 1;
 let isWorking = false;
 
 document.querySelector("#fileDialog").addEventListener("change", (event) => {
@@ -59,12 +60,14 @@ function appendSvg(_svg) {
   _svg.setAttribute("width", correctSvgProps.svg.width);
   _svg.setAttribute("height", correctSvgProps.svg.height);
   _svg.setAttribute("viewBox", correctSvgProps.viewbox);
+  scale = getSvgScale(_svg);
   // BG RECT
   const bgSvgRect = createBgSvgRect(_svg);
   _svg.classList.add("svg-original");
+  console.log(binSize)
   svgWrapper.appendChild(bgSvgRect);
-  bgSvgRect.setAttribute("width", binSize.width);
-  bgSvgRect.setAttribute("height", binSize.height);
+  bgSvgRect.setAttribute("width", binSize.width / scale);
+  bgSvgRect.setAttribute("height", binSize.height / scale);
 
   items.bg = bgSvgRect.querySelector("rect");
   items.svg = _svg;
