@@ -25,6 +25,9 @@
 }
 
 .preview {
+  /* display: none; */
+  visibility: hidden;
+  height: 0;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -37,9 +40,21 @@
 }
 
 #bins {
+  /* visibility: hidden; */
   display: flex;
   gap: 20px;
   max-width: 30%;
+}
+
+.info--outerRect {
+  display: flex;
+  align-items: flex-start;
+}
+
+.info--outerRect .result__info-value {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 /* svg {

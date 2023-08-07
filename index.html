@@ -13,20 +13,21 @@
       <label for="select">
         Единицы измерения
         <select id="select" class="control__select">
-          <option value="mm" selected>мм</option>
-          <option value="m">м</option>
+          <option value="mm">мм</option>
+          <option value="m" selected>м</option>
         </select>
       </label>
-      <button class="control__btn" data-action="area">Посчитать площадь</button>
+      <!-- <button class="control__btn" data-action="area">Посчитать площадь</button>
       <button class="control__btn" data-action="length">Посчитать периметр</button>
-      <button class="control__btn" data-action="outerRect">Описанный прямоугольник</button>
-      <div class="control__group">
+      <button class="control__btn" data-action="outerRect">Описанный прямоугольник</button> -->
+      <!-- <div class="control__group">
         <div class="control__fields field">
           <input class="field__item field__item--width" type="text" placeholder="Ширина, мм">
           <input class="field__item field__item--height" type="text" placeholder="Высота, мм">
         </div>
         <button class="control__btn" data-action="nest">Компоновать элементы</button>
-      </div>
+      </div> -->
+      <input type="file" name="" id="fileDialog">
     </div>
     <div id="results" class="result">
       <h2 class="result__title">Результаты:</h2>
@@ -42,8 +43,9 @@
         <span class="result__info-title">Описанный прямоугольник: </span>
         <span class="result__info-value">0</span>
       </div>
+      <div class="progress"><div class="progress_inner" id="info_progress"></div></div>
     </div>
-    <div class="sidebar">				
+    <!-- <div class="sidebar">				
       <div id="info">				
       <h2 id="info_time"></h2>
       <div class="progress"><div class="progress_inner" id="info_progress"></div></div>
@@ -64,11 +66,10 @@
         </div>
       </div>
       </div>				
-    </div>
-    <input type="file" name="" id="fileDialog">
-    <button class="control__btn" data-action="outerRectResults">Описанный прямоугольник результатов</button>
+    </div> -->
+    <!-- <button class="control__btn" data-action="outerRectResults">Описанный прямоугольник результатов</button> -->
     <div id="bins_outer-rect"></div>
-    <button data-action="download">Скачать</button>
+    <!-- <button data-action="download">Скачать</button> -->
     <div class="preview"></div>
     <div id="bins"></div>
   </div>
