@@ -64,7 +64,7 @@ function appendSvg(_svg) {
   // BG RECT
   const bgSvgRect = createBgSvgRect(_svg);
   _svg.classList.add("svg-original");
-  console.log(binSize)
+  // console.log(binSize)
   svgWrapper.appendChild(bgSvgRect);
 
   items.bg = bgSvgRect.querySelector("rect");
@@ -145,7 +145,7 @@ function startNesting(fn) {
   // });
 
   const scale = getSvgScale(items.svg);
-  console.log(scale)
+  // console.log(scale)
   SvgNest.config({
     spacing: 10 * scale,
   });

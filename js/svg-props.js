@@ -9,7 +9,7 @@
     const scale = getSvgScale(svg);
 
     function getLength(_svg) {
-      const paths = _svg.querySelectorAll("path, polygon");
+      const paths = _svg.querySelectorAll("path, polygon, polyline");
 
       return [...paths].reduce((sum, item) => {
         sum += item.getTotalLength();
@@ -31,7 +31,7 @@
       //   check[a]++;
       // }
       for (let i = 0; i < imageData.length; i += 4) {
-        if (imageData[i] < 50 && imageData[i + 1] === 0 && imageData[i + 2] === 0) {
+        if (imageData[i] < 125 && imageData[i + 1] === 0 && imageData[i + 2] === 0) {
           alphaValues++;
         }
       }
@@ -67,17 +67,23 @@
     function getCanvasData(_svg) {
       // console.log(_svg, svgViewbox)
       const { ctx, canvas, canvasScale, destroy } = createCanvas(svgViewbox[2], svgViewbox[3]);
-      const paths = _svg.querySelectorAll("path, polygon, polyline");
+      let paths = [..._svg.querySelectorAll("path, polygon, polyline")];
+      const rects = [];
       // ctx.clearRect(0, 0, canvas.width, canvas.height);
       
       ctx.fillStyle = "#f00";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
       // console.log(canvas.width, canvas.height);
+      paths = sortPaths(paths);
+      paths.forEach((item, i) => {
+        rects.push(item.getBBox());
+      });
 
-      [...paths].forEach((item, i) => {
+      for (let i = paths.length - 1; i >= 0; i--) {
+        const item = paths[i];
         const poly = item.closest("polyline, polygon");
         let d = "";
+        let check = intersectsWithMany(item.getBBox(), rects);
 
         if (poly) {
           d = polyToPath(item.getAttribute("points"), poly.tagName);
@@ -88,25 +94,104 @@
         const xOffset = (translate.x -svgViewbox[0]),
           yOffset = (translate.y - svgViewbox[1]);
 
-        // console.log(item, translate.x, Math.abs(svgViewbox[0]), translate.x + Math.abs(svgViewbox[0]), xOffset);
-        // console.log(d, xOffset, yOffset)
-
         ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, xOffset, yOffset);
-        // ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, translate.x, translate.y);
         ctx.rotate(rotate * Math.PI / 180);
 
-        ctx.fillStyle = "#000";
+        ctx.fillStyle = check ? "#f00" : "#000";
         const path = new Path2D(d);
         ctx.beginPath();
         ctx.fill(path);
         ctx.setTransform(1, 0, 0, 1, 0, 0);
-      });
+      }
+
+      // [...paths].forEach((item, i) => {
+      //   const poly = item.closest("polyline, polygon");
+      //   let d = "";
+      //   let check = intersects(item.getBBox(), rects);
+      //   // console.log(check, item, item.getBBox())
+      //   console.log(check)
+
+      //   if (poly) {
+      //     d = polyToPath(item.getAttribute("points"), poly.tagName);
+      //   } else {
+      //     d = item.getAttribute("d");
+      //   }
+      //   const { translate, rotate } = getGProps(item);
+      //   const xOffset = (translate.x -svgViewbox[0]),
+      //     yOffset = (translate.y - svgViewbox[1]);
+
+      //   // console.log(item, translate.x, Math.abs(svgViewbox[0]), translate.x + Math.abs(svgViewbox[0]), xOffset);
+      //   // console.log(d, xOffset, yOffset)
+
+      //   ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, xOffset, yOffset);
+      //   // ctx.setTransform(1 / canvasScale, 0, 0, 1 / canvasScale, translate.x, translate.y);
+      //   ctx.rotate(rotate * Math.PI / 180);
+
+      //   // ctx.fillStyle = check ? "#f00" : "#000";
+      //   ctx.fillStyle = "#000";
+      //   const path = new Path2D(d);
+      //   ctx.beginPath();
+      //   ctx.fill(path);
+      //   ctx.setTransform(1, 0, 0, 1, 0, 0);
+      // });
 
       const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
 
       destroy();
 
       return { imageData, canvasScale, canvas };
+    }
+
+    function sortPaths(paths) {
+      let topLayer = [],
+        bottomLayer = [];
+        // console.log(paths.length)
+      for (let i = 0; i < paths.length; i++) {
+        let rect1 = paths[i].getBBox();
+        for (let j = 0; j < paths.length; j++) {
+          let rect2 = paths[j].getBBox();
+          // console.log(intersects(rect1, rect2), paths[i], paths[j])
+          if (intersects(rect1, rect2)) {
+            if (rectLessThan(rect1, rect2)) {
+              topLayer.push(paths[i]);
+            }
+          } else {
+            if (!bottomLayer.includes(paths[i]) && !topLayer.includes(paths[i])) {
+              bottomLayer.push(paths[i]);
+            }
+          }
+        }
+      }
+      bottomLayer = bottomLayer.filter((item) => {
+        return !topLayer.includes(item);
+      });
+      // console.log(topLayer, bottomLayer)
+      return [...topLayer, ...bottomLayer];
+    }
+
+    function intersectsWithMany(current, rects) {
+      return rects.filter((rect) => {
+        if (current.x === rect.x &&
+            current.y === rect.y &&
+            current.width === rect.width &&
+            current.height === rect.height) {
+              return false;
+            }
+
+        return intersects(current, rect) && rectLessThan(current, rect);
+      }).length > 0;
+    }
+
+    function intersects(rect1, rect2) {
+      return rect1.x < rect2.x + rect2.width &&
+        rect1.x + rect1.width > rect2.x &&
+        rect1.y < rect2.y + rect2.height &&
+        rect1.y + rect1.height > rect2.y;
+    }
+
+    function rectLessThan(rect1, rect2) {
+      return rect1.width < rect2.width &&
+        rect1.height < rect2.height;
     }
     
     function createCanvas(width, height) {
